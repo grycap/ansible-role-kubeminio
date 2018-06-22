@@ -1,0 +1,4 @@
+# Configure the service to publish events via webhook
+enable_notifications: false
+# Server address and port to publish events
+webhook_endpoint: 'localhost:4000'

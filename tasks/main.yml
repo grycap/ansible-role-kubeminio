@@ -1,0 +1,16 @@
+---
+- name: Create Persistent Volume Claim
+  block:
+    - copy: src=minio-standalone-pvc.yaml dest=/tmp/minio-standalone-pvc.yaml
+    - command: kubectl create -f /tmp/minio-standalone-pvc.yaml
+
+- include: minio-notifications.yaml
+  when: enable_notifications == true
+
+- include: minio.yaml
+  when: enable_notifications == false
+
+- name: Create Service
+  block:
+    - copy: src=minio-standalone-service.yaml dest=/tmp/minio-standalone-service.yaml
+    - command: kubectl create -f /tmp/minio-standalone-service.yaml

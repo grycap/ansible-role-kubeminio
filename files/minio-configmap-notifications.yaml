@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-config
+data:
+  config.json: |-
+    {
+      "version": "23",
+      "credential": {
+        "accessKey": "minio",
+        "secretKey": "minio123"
+      },
+      "region": "",
+      "browser": "on",
+      "domain": "",
+      "storageclass": {
+        "standard": "",
+        "rrs": ""
+      },
+      "cache": {
+        "drives": [],
+        "expiry": 90,
+        "exclude": []
+      },
+      "notify": {
+        "webhook": {
+          "1": {
+            "enable": true,
+            "endpoint": "http://webhook_endpoint/function1"
+          },
+          "2": {
+            "enable": true,
+            "endpoint": "http://webhook_endpoint/function2"
+          },
+          "3": {
+            "enable": true,
+            "endpoint": "http://webhook_endpoint/function3"
+          },
+          "4": {
+            "enable": true,
+            "endpoint": "http://webhook_endpoint/function4"
+          },
+          "5": {
+            "enable": true,
+            "endpoint": "http://webhook_endpoint/function5"
+          }
+        }
+      }
+    }
