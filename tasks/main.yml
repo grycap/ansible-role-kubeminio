@@ -14,3 +14,16 @@
   block:
     - copy: src=minio-standalone-service.yaml dest=/tmp/minio-standalone-service.yaml
     - command: kubectl create -f /tmp/minio-standalone-service.yaml
+
+- name: Create .local/bin folder
+  file: 
+    path: {{ lookup('env', 'HOME') }}/.local/bin
+    state: directory
+    mode: 0775
+    recurse: yes
+
+- name: Download Minio Client binary
+  get_url:
+    url: https://dl.minio.io/client/mc/release/linux-amd64/mc
+    dest: {{ lookup('env', 'HOME') }}/.local/bin/mc
+    mode: 0755
