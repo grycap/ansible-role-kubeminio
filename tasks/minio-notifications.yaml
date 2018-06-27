@@ -1,10 +1,6 @@
 - name: Create configMap to enable webhooks notifications
   block:
-    - copy: src=minio-configmap-notifications.yaml dest=/tmp/minio-configmap-notifications.yaml
-    - replace:
-        path: /tmp/minio-configmap-notifications.yaml
-        regexp: 'webhook_endpoint'
-        replace: '{{ webhook_endpoint }}'
+    - template: src=minio-configmap-notifications.j2 dest=/tmp/minio-configmap-notifications.yaml
     - command: kubectl create -f /tmp/minio-configmap-notifications.yaml
 
 - name: Create standalone deployment loading the configMap
