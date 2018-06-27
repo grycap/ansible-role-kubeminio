@@ -1,4 +1,7 @@
 ---
+- name: Create Minio namespace
+  command: kubectl create namespace minio
+
 - name: Create Persistent Volume Claim
   block:
     - copy: src=minio-standalone-pvc.yaml dest=/tmp/minio-standalone-pvc.yaml
