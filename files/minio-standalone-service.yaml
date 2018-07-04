@@ -5,11 +5,12 @@ metadata:
   name: minio-service
   namespace: minio
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - port: 9000
       targetPort: 9000
       protocol: TCP
+      nodePort: 31852
   selector:
     # Looks for labels `app:minio` in the namespace and applies the spec
     app: minio
