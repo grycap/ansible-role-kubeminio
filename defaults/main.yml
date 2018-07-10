@@ -1,7 +1,8 @@
 # Configure the service to publish events via webhook
 enable_notifications: false
-# Server address and port to publish events
-webhook_endpoint: 'localhost:4000'
+# List of endpoints to publish events
+# Needed variables: { id: "", endpoint: ""}
+webhook_endpoints: []
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access

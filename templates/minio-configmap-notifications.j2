@@ -26,26 +26,13 @@ data:
       },
       "notify": {
         "webhook": {
-          "1": {
+        {% for item in webhook_endpoints %}
+          "{{ item.id }}": {
             "enable": true,
-            "endpoint": "http://{{ webhook_endpoint }}/function1"
-          },
-          "2": {
-            "enable": true,
-            "endpoint": "http://{{ webhook_endpoint }}/function2"
-          },
-          "3": {
-            "enable": true,
-            "endpoint": "http://{{ webhook_endpoint }}/function3"
-          },
-          "4": {
-            "enable": true,
-            "endpoint": "http://{{ webhook_endpoint }}/function4"
-          },
-          "5": {
-            "enable": true,
-            "endpoint": "http://{{ webhook_endpoint }}/function5"
+            "endpoint": "{{ item.endpoint }}"
           }
+          {{ "," if not loop.last }}
+        {% endfor %}
         }
       }
     }
