@@ -3,9 +3,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: minio-pv-claim
   namespace: minio
-  labels:
-    app: minio
 spec:
+  selector:
+    matchLabels:
+      app: minio
   accessModes:
     - ReadWriteOnce
   resources:
