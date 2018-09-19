@@ -1,4 +1,4 @@
 - name: Create standalone deployment
   block:
-    - copy: src=minio-standalone-deployment.yaml dest=/tmp/minio-standalone-deployment.yaml
+    - template: src=minio-standalone-deployment.j2 dest=/tmp/minio-standalone-deployment.yaml
     - command: kubectl apply -f /tmp/minio-standalone-deployment.yaml

@@ -24,6 +24,11 @@ spec:
         args:
         - server
         - /data
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: {{ minio_accesskey }}
+        - name: MINIO_SECRET_KEY
+          value: {{ minio_secretkey }}
         ports:
         - containerPort: 9000
         readinessProbe:
