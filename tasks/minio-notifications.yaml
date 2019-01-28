@@ -5,5 +5,5 @@
 
 - name: Create standalone deployment loading the configMap
   block:
-    - copy: src=minio-standalone-deployment-with-notifications.yaml dest=/tmp/minio-standalone-deployment-with-notifications.yaml
+    - template: src=minio-standalone-deployment-with-notifications.j2 dest=/tmp/minio-standalone-deployment-with-notifications.yaml
     - command: kubectl apply -f /tmp/minio-standalone-deployment-with-notifications.yaml

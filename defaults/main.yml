@@ -7,3 +7,5 @@ webhook_endpoints: []
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access
 minio_secretkey: 'minio123'
+# Deploy in Kubernetes Master node
+master_deploy: false
