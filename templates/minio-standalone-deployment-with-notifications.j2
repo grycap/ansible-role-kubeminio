@@ -59,6 +59,9 @@ spec:
             port: 9000
           initialDelaySeconds: 120
           periodSeconds: 20
+        resources:
+          requests:
+            memory: 250Mi
 {% if master_deploy %}
       tolerations:
       - key: node-role.kubernetes.io/master
