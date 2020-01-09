@@ -4,9 +4,10 @@ metadata:
   name: minio-pv-claim
   namespace: minio
 spec:
+{% if volume_labels %}
   selector:
-    matchLabels:
-      app: minio
+    matchLabels: {{ volume_labels }}
+{% endif %}
   accessModes:
     - ReadWriteOnce
   resources:
