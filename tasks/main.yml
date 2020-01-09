@@ -6,7 +6,7 @@
 
 - name: Create Persistent Volume Claim
   block:
-    - copy: src=minio-standalone-pvc.yaml dest=/tmp/minio-standalone-pvc.yaml
+    - template: src=minio-standalone-pvc.j2 dest=/tmp/minio-standalone-pvc.yaml
     - command: kubectl apply -f /tmp/minio-standalone-pvc.yaml
 
 - include: minio-notifications.yaml

@@ -9,3 +9,5 @@ minio_accesskey: 'minio'
 minio_secretkey: 'minio123'
 # Deploy in Kubernetes Master node
 master_deploy: false
+# Labels used to match with created PersistentVolume
+volume_labels: {}
