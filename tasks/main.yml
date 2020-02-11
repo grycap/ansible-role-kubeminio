@@ -4,6 +4,12 @@
     - copy: src=minio-namespace.yaml dest=/tmp/minio-namespace.yaml
     - command: kubectl apply -f /tmp/minio-namespace.yaml
 
+- name: Create self-signed certs and secret
+  block:
+  - command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout minio-private.key -out minio-public.crt -subj "/CN=kubeserver/O=kubeserver"
+  - command: kubectl create secret generic tls-ssl-minio --from-file=private.key=minio-private.key --from-file=public.crt=minio-public.crt --namespace=minio
+  when: enable_tls == true
+
 - name: Create Persistent Volume Claim
   block:
     - template: src=minio-standalone-pvc.j2 dest=/tmp/minio-standalone-pvc.yaml

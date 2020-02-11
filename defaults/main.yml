@@ -11,3 +11,5 @@ minio_secretkey: 'minio123'
 master_deploy: false
 # Labels used to match with created PersistentVolume
 volume_labels: {}
+# Enable secure connection through HTTPS using self-signed certs
+enable_tls: true
