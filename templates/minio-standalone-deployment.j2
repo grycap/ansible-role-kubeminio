@@ -41,6 +41,10 @@ spec:
 {% endif %}
         image: minio/minio:{{ minio_release }}
         args:
+{% if enable_tls %}
+        - -S
+        - /etc/minio/certs
+{% endif %}
         - server
         - /data
         env:
