@@ -18,13 +18,33 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: minio-pv-claim
+{% if enable_tls %}
+      - name: secret-volume
+        secret:
+          secretName: tls-ssl-minio
+          items:
+          - key: public.crt
+            path: public.crt
+          - key: private.key
+            path: private.key
+          - key: public.crt
+            path: CAs/public.crt
+{% endif %}
       containers:
       - name: minio
         volumeMounts:
         - name: data 
           mountPath: "/data"
+{% if enable_tls %}
+        - name: secret-volume
+          mountPath: /etc/minio/certs
+{% endif %}
         image: minio/minio:{{ minio_release }}
         args:
+{% if enable_tls %}
+        - -S
+        - /etc/minio/certs
+{% endif %}
         - server
         - /data
         env:
@@ -36,12 +56,18 @@ spec:
         - containerPort: 9000
         readinessProbe:
           httpGet:
+{% if enable_tls %}
+            scheme: HTTPS
+{% endif %}
             path: /minio/health/ready
             port: 9000
           initialDelaySeconds: 120
           periodSeconds: 20
         livenessProbe:
           httpGet:
+{% if enable_tls %}
+            scheme: HTTPS
+{% endif %}
             path: /minio/health/live
             port: 9000
           initialDelaySeconds: 120

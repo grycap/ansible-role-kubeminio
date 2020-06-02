@@ -9,6 +9,6 @@ spec:
     - port: 9000
       targetPort: 9000
       protocol: TCP
-      nodePort: 31852
+      nodePort: 30300
   selector:
     app: minio
