@@ -4,17 +4,34 @@
     - copy: src=minio-namespace.yaml dest=/tmp/minio-namespace.yaml
     - command: kubectl apply -f /tmp/minio-namespace.yaml
 
-- name: Check if tls-ssl-minio secret is created
-  command: kubectl get secret tls-ssl-minio -n minio
-  register: minio_secret_created
-  failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
-  when: enable_tls == true
 
-- name: Create self-signed certs and secret
+- name: TLS support
   block:
-  - command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout minio-private.key -out minio-public.crt -subj "/CN=kubeserver/O=kubeserver"
-  - command: kubectl create secret generic tls-ssl-minio --from-file=private.key=minio-private.key --from-file=public.crt=minio-public.crt --namespace=minio
-  when: enable_tls == true and minio_secret_created.rc == 1
+  - name: Check if certs are created
+    block:
+    - stat:
+        path: /var/tmp/certs
+      register: certs_dir
+    - stat:
+        path: /var/tmp/certs/private.key
+      register: certs_private
+    - stat:
+        path: /var/tmp/certs/public.crt
+      register: certs_public
+  - name: Create certs dir
+    command: mkdir /var/tmp/certs
+    when: not certs_dir.stat.exists
+  - name: Create certs
+    command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
+    when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
+  - name: Check if tls-ssl-minio secret is created
+    command: kubectl get secret tls-ssl-minio -n minio
+    register: minio_secret_created
+    failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
+  - name: Create certs secret
+    command: kubectl create secret generic certs --from-file=/var/tmp/certs/private.key --from-file=/var/tmp/certs/public.crt --namespace minio
+    when: minio_secret_created.rc == 1
+  when: enable_tls == true
 
 - name: Create Persistent Volume Claim
   block:
