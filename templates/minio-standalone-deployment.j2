@@ -21,7 +21,7 @@ spec:
 {% if enable_tls %}
       - name: secret-volume
         secret:
-          secretName: tls-ssl-minio
+          secretName: certs
           items:
           - key: public.crt
             path: public.crt
