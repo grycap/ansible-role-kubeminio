@@ -25,7 +25,7 @@
     command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
-    command: kubectl get secret tls-ssl-minio -n minio
+    command: kubectl get secret certs -n minio
     register: minio_secret_created
     failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
   - name: Create certs secret
