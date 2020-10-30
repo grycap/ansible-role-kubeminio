@@ -1,5 +1,5 @@
 # Release version of minio
-minio_release: 'RELEASE.2020-07-14T19-14-30Z'
+minio_release: 'RELEASE.2020-10-28T08-16-50Z'
 # Configure the service to publish events via webhook
 enable_notifications: false
 # List of endpoints to publish events
