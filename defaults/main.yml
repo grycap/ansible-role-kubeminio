@@ -15,3 +15,5 @@ master_deploy: false
 volume_labels: {}
 # Enable secure connection through HTTPS using self-signed certs
 enable_tls: true
+# Default kubeconfig path
+kubeconfig_path: '/etc/kubernetes/admin.conf'

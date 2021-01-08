@@ -3,6 +3,8 @@
   block:
     - copy: src=minio-namespace.yaml dest=/tmp/minio-namespace.yaml
     - command: kubectl apply -f /tmp/minio-namespace.yaml
+      environment:
+        KUBECONFIG: {{ kubeconfig_path }}
 
 
 - name: TLS support
@@ -26,10 +28,14 @@
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
     command: kubectl get secret certs -n minio
+    environment:
+      KUBECONFIG: {{ kubeconfig_path }}
     register: minio_secret_created
     failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
   - name: Create certs secret
     command: kubectl create secret generic certs --from-file=/var/tmp/certs/private.key --from-file=/var/tmp/certs/public.crt --namespace minio
+    environment:
+      KUBECONFIG: {{ kubeconfig_path }}
     when: minio_secret_created.rc == 1
   when: enable_tls == true
 
@@ -37,17 +43,25 @@
   block:
     - template: src=minio-standalone-pvc.j2 dest=/tmp/minio-standalone-pvc.yaml
     - command: kubectl apply -f /tmp/minio-standalone-pvc.yaml
+      environment:
+        KUBECONFIG: {{ kubeconfig_path }}
 
 - include: minio-notifications.yaml
   when: enable_notifications == true
+  environment:
+    KUBECONFIG: {{ kubeconfig_path }}
 
 - include: minio.yaml
   when: enable_notifications == false
+  environment:
+    KUBECONFIG: {{ kubeconfig_path }}
 
 - name: Create Service
   block:
     - copy: src=minio-standalone-service.yaml dest=/tmp/minio-standalone-service.yaml
     - command: kubectl apply -f /tmp/minio-standalone-service.yaml
+      environment:
+        KUBECONFIG: {{ kubeconfig_path }}
 
 - name: Download Minio Client binary
   get_url:
