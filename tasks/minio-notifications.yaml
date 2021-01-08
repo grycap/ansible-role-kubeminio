@@ -2,8 +2,12 @@
   block:
     - template: src=minio-configmap-notifications.j2 dest=/tmp/minio-configmap-notifications.yaml
     - command: kubectl apply -f /tmp/minio-configmap-notifications.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
 
 - name: Create standalone deployment loading the configMap
   block:
     - template: src=minio-standalone-deployment-with-notifications.j2 dest=/tmp/minio-standalone-deployment-with-notifications.yaml
     - command: kubectl apply -f /tmp/minio-standalone-deployment-with-notifications.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
