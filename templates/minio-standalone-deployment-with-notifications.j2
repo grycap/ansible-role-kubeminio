@@ -23,7 +23,7 @@ spec:
           name: minio-config
       - name: config-dir
         emptyDir: {}
-{% if enable_tls %}
+{% if enable_tls and not enable_ingress %}
       - name: secret-volume
         secret:
           secretName: certs
@@ -54,7 +54,7 @@ spec:
           mountPath: "/data"
         - name: config-dir
           mountPath: /etc/minio
-{% if enable_tls %}
+{% if enable_tls and not enable_ingress %}
         - name: secret-volume
           mountPath: /etc/minio/certs
 {% endif %}
@@ -68,7 +68,7 @@ spec:
         - containerPort: 9000
         readinessProbe:
           httpGet:
-{% if enable_tls %}
+{% if enable_tls and not enable_ingress %}
             scheme: HTTPS
 {% endif %}
             path: /minio/health/ready
@@ -77,7 +77,7 @@ spec:
           periodSeconds: 20
         livenessProbe:
           httpGet:
-{% if enable_tls %}
+{% if enable_tls and not enable_ingress %}
             scheme: HTTPS
 {% endif %}
             path: /minio/health/live
