@@ -37,7 +37,7 @@
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
     when: minio_secret_created.rc == 1
-  when: enable_tls == true
+  when: enable_tls == true and enable_ingress != false
 
 - name: Create Persistent Volume Claim
   block:
@@ -62,6 +62,14 @@
     - command: kubectl apply -f /tmp/minio-standalone-service.yaml
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
+
+- name: Create Ingress
+  block:
+    - template: src=minio-ingress.j2 dest=/tmp/minio-ingress.yaml
+    - command: kubectl apply -f /tmp/minio-ingress.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+  when: enable_ingress == true
 
 - name: Download Minio Client binary
   get_url:
