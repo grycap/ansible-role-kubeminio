@@ -37,7 +37,7 @@
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
     when: minio_secret_created.rc == 1
-  when: enable_tls == true and enable_ingress != false
+  when: enable_tls == true and enable_ingress == false
 
 - name: Create Persistent Volume Claim
   block:
