@@ -15,8 +15,8 @@ kubeconfig_path: '/etc/kubernetes/admin.conf'
 # Enable ingress with a custom DNS host
 enable_ingress: false
 # Hostname for the ingress (API)
-public_hostname_api: ''
+public_hostname_api: "''"
 # Hostname for the ingress (Console)
-public_hostname_console: ''
+public_hostname_console: "''"
 # Cert-manager issuer
 ingress_certmanager_issuer: 'letsencrypt-prod'
