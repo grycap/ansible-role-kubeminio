@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-console-service
+  namespace: minio
+spec:
+  type: NodePort
+  ports:
+  - port: 9001
+    targetPort: 9001
+    protocol: TCP
+    nodePort: 30303
+  selector:
+    app: minio

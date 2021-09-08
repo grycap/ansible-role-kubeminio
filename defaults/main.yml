@@ -1,10 +1,5 @@
 # Release version of minio
-minio_release: 'RELEASE.2021-04-22T15-44-28Z'
-# Configure the service to publish events via webhook
-enable_notifications: false
-# List of endpoints to publish events
-# Needed variables: { id: "", endpoint: ""}
-webhook_endpoints: []
+minio_release: 'RELEASE.2021-09-03T03-56-13Z'
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access
@@ -19,7 +14,9 @@ enable_tls: true
 kubeconfig_path: '/etc/kubernetes/admin.conf'
 # Enable ingress with a custom DNS host
 enable_ingress: false
-# Hostname for the ingress
-public_hostname: ''
+# Hostname for the ingress (API)
+public_hostname_api: ''
+# Hostname for the ingress (Console)
+public_hostname_console: ''
 # Cert-manager issuer
 ingress_certmanager_issuer: 'letsencrypt-prod'
