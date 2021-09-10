@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: minio
+  name: minio-console
   namespace: minio
   annotations:
     #nginx.ingress.kubernetes.io/rewrite-target: /
@@ -9,17 +9,17 @@ metadata:
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
 spec:
   rules:
-  - host: {{ public_hostname_api }}
+  - host: {{ public_hostname_console }}
     http:
       paths:
       - backend:
           service:
-            name: minio-service
+            name: minio-console-service
             port:
-              number: 9000
+              number: 9001
         pathType: Prefix
         path: /
   tls:
   - hosts:
-    - {{ public_hostname_api }}
-    secretName: {{ public_hostname_api }}
+    - {{ public_hostname_console }}
+    secretName: {{ public_hostname_console }}

@@ -12,19 +12,21 @@
   - name: Check if certs are created
     block:
     - stat:
-        path: /var/tmp/certs
+        path: /var/tmp/certs_minio
       register: certs_dir
     - stat:
-        path: /var/tmp/certs/private.key
+        path: /var/tmp/certs_minio/private.key
       register: certs_private
     - stat:
-        path: /var/tmp/certs/public.crt
+        path: /var/tmp/certs_minio/public.crt
       register: certs_public
   - name: Create certs dir
-    command: mkdir /var/tmp/certs
+    command: mkdir /var/tmp/certs_minio
     when: not certs_dir.stat.exists
   - name: Create certs
-    command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
+    block:
+    - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
+    - command: openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
     command: kubectl get secret certs -n minio
@@ -33,7 +35,7 @@
     register: minio_secret_created
     failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
   - name: Create certs secret
-    command: kubectl create secret generic certs --from-file=/var/tmp/certs/private.key --from-file=/var/tmp/certs/public.crt --namespace minio
+    command: kubectl create secret generic certs --from-file=/var/tmp/certs_minio/private.key --from-file=/var/tmp/certs_minio/public.crt --namespace minio
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
     when: minio_secret_created.rc == 1
@@ -41,32 +43,44 @@
 
 - name: Create Persistent Volume Claim
   block:
-    - template: src=minio-standalone-pvc.j2 dest=/tmp/minio-standalone-pvc.yaml
-    - command: kubectl apply -f /tmp/minio-standalone-pvc.yaml
+    - template: src=minio-pvc.j2 dest=/tmp/minio-pvc.yaml
+    - command: kubectl apply -f /tmp/minio-pvc.yaml
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
 
-- include: minio-notifications.yaml
-  when: enable_notifications == true
-  environment:
-    KUBECONFIG: "{{ kubeconfig_path }}"
-
-- include: minio.yaml
-  when: enable_notifications == false
-  environment:
-    KUBECONFIG: "{{ kubeconfig_path }}"
-
-- name: Create Service
+- name: Create deployment
   block:
-    - copy: src=minio-standalone-service.yaml dest=/tmp/minio-standalone-service.yaml
-    - command: kubectl apply -f /tmp/minio-standalone-service.yaml
+    - template: src=minio-deployment.j2 dest=/tmp/minio-deployment.yaml
+    - command: kubectl apply -f /tmp/minio-deployment.yaml
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
 
-- name: Create Ingress
+- name: Create Service for the API
+  block:
+    - copy: src=minio-service.yaml dest=/tmp/minio-service.yaml
+    - command: kubectl apply -f /tmp/minio-service.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+- name: Create Service for the Console
+  block:
+    - copy: src=minio-console-service.yaml dest=/tmp/minio-console-service.yaml
+    - command: kubectl apply -f /tmp/minio-console-service.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+- name: Create Ingress for the API
   block:
     - template: src=minio-ingress.j2 dest=/tmp/minio-ingress.yaml
     - command: kubectl apply -f /tmp/minio-ingress.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+  when: enable_ingress == true
+
+- name: Create Ingress for the Console
+  block:
+    - template: src=minio-console-ingress.j2 dest=/tmp/minio-console-ingress.yaml
+    - command: kubectl apply -f /tmp/minio-console-ingress.yaml
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
   when: enable_ingress == true
