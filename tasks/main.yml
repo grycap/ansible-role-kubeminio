@@ -12,21 +12,21 @@
   - name: Check if certs are created
     block:
     - stat:
-        path: /var/tmp/certs
+        path: /var/tmp/certs_minio
       register: certs_dir
     - stat:
-        path: /var/tmp/certs/private.key
+        path: /var/tmp/certs_minio/private.key
       register: certs_private
     - stat:
-        path: /var/tmp/certs/public.crt
+        path: /var/tmp/certs_minio/public.crt
       register: certs_public
   - name: Create certs dir
-    command: mkdir /var/tmp/certs
+    command: mkdir /var/tmp/certs_minio
     when: not certs_dir.stat.exists
   - name: Create certs
     block:
     - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
-    - command: openssl req -new -x509 -nodes -days 730 -key /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -config /tmp/minio-openssl.conf
+    - command: openssl req -new -x509 -nodes -days 730 -key /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
     command: kubectl get secret certs -n minio
@@ -35,7 +35,7 @@
     register: minio_secret_created
     failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
   - name: Create certs secret
-    command: kubectl create secret generic certs --from-file=/var/tmp/certs/private.key --from-file=/var/tmp/certs/public.crt --namespace minio
+    command: kubectl create secret generic certs --from-file=/var/tmp/certs_minio/private.key --from-file=/var/tmp/certs_minio/public.crt --namespace minio
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
     when: minio_secret_created.rc == 1
