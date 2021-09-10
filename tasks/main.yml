@@ -26,7 +26,7 @@
   - name: Create certs
     block:
     - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
-    - command: openssl req -new -x509 -nodes -days 730 -key /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
+    - command: openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
     command: kubectl get secret certs -n minio
