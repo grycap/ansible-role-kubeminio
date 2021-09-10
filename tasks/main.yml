@@ -24,7 +24,9 @@
     command: mkdir /var/tmp/certs
     when: not certs_dir.stat.exists
   - name: Create certs
-    command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -subj "/CN=kubeserver/O=kubeserver"
+    block:
+    - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
+    - command: openssl req -new -x509 -nodes -days 730 -key /var/tmp/certs/private.key -out /var/tmp/certs/public.crt -config /tmp/minio-openssl.conf
     when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
   - name: Check if tls-ssl-minio secret is created
     command: kubectl get secret certs -n minio

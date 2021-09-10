@@ -60,6 +60,8 @@ spec:
         - name: MINIO_BROWSER_REDIRECT_URL
           value: "https://{{ public_hostname_console }}"
 {% else %}
+        - name: MINIO_SERVER_URL
+          value: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30300"
         - name: MINIO_BROWSER_REDIRECT_URL
           value: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30303"
 {% endif %}

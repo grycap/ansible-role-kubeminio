@@ -1,0 +1,15 @@
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+O = GRyCAP
+CN = kubeserver
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = {{ ansible_default_ipv4.address }}
+DNS.1 = kubeserver
