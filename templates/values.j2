@@ -57,10 +57,17 @@ consoleIngress:
     secretName: {{ public_hostname_console }}
 
 # -- DEPLOYMENT --
+DeploymentUpdate:
+ type: Recreate
+
 {% if master_deploy %}
       nodeSelector:
        node-role.kubernetes.io/master: ''
-       
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+
 image:
  repository: minio/minio
  tag: {{ chart_release }}
