@@ -1,5 +1,5 @@
 # Release version of minio
-chart_release: 'RELEASE.2022-07-24T17-09-31Z'
+chart_release: '4.0.6'
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access

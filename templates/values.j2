@@ -67,8 +67,3 @@ DeploymentUpdate:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
-
-image:
- repository: minio/minio
- tag: {{ chart_release }}
-

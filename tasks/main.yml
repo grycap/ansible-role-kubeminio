@@ -56,7 +56,7 @@
   when: enable_tls == true and enable_ingress == false
 
 - name: Install (or upgrade) the chart
-  command: helm upgrade minio --install minio/minio --namespace minio --create-namespace --values /tmp/minio-values.yaml
+  command: helm upgrade minio --install minio/minio --namespace minio --create-namespace --values /tmp/minio-values.yaml --version {{ chart_release }}
   environment:
     KUBECONFIG: "{{ kubeconfig_path }}"
 
