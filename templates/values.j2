@@ -65,9 +65,6 @@ consoleIngress:
     secretName: {{ public_hostname_console }}
 
 # -- DEPLOYMENT --
-DeploymentUpdate:
-  type: Recreate
-
 {% if master_deploy %}
 tolerations:
 - key: node-role.kubernetes.io/master
