@@ -65,6 +65,8 @@ consoleIngress:
     secretName: {{ public_hostname_console }}
 
 # -- DEPLOYMENT --
+mode: standalone
+
 {% if master_deploy %}
 tolerations:
 - key: node-role.kubernetes.io/master
