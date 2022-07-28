@@ -15,13 +15,11 @@ tls:
 consoleService:
   type: NodePort
   nodePort: 30303
-  externalIPs: {{ ansible_default_ipv4.address }} # NOT SURE
 
 # -- MINIO SERVICE --
 service:
   type: NodePort
   port: 30300
-  externalIPs: {{ ansible_default_ipv4.address }}
 
 # -- PVC --
 persistence:
