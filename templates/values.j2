@@ -40,9 +40,16 @@ ingress:
     hosts:
       - {{ public_hostname_api }}
     secretName: {{ public_hostname_api }}
+
+{% if enable_ingress %}
 environment:
-  MINIO_BROWSER_REDIRECT_URL: {{ public_hostname_console }}
-  MINIO_SERVER_URL: {{ public_hostname_api }}
+  MINIO_BROWSER_REDIRECT_URL: "https://{{ public_hostname_console }}"
+  MINIO_SERVER_URL: "https://{{ public_hostname_api }}"
+{% else %}
+environment:
+  MINIO_BROWSER_REDIRECT_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30300"
+  MINIO_SERVER_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30303"
+{% endif %}
 
 # -- MINIO CONSOLE INGRESS --
 consoleIngress:
