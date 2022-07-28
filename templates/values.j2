@@ -6,10 +6,10 @@ minioConsolePort: 9001
 certsPath: /etc/minio/certs/
 
 tls:
- enabled: {{ enable_tls }}
-  certSecret: certs
-  publicCrt: public.crt
-  privateKey: private.key
+  enabled: {{ enable_tls }}
+    certSecret: certs
+    publicCrt: public.crt
+    privateKey: private.key
 
 # -- MINIO CONSOLE SERVICE --
 consoleService:
@@ -23,8 +23,8 @@ service:
 
 # -- PVC --
 persistence:
- accessModes: ReadWriteOnce
- size: 20Gi
+  accessModes: ReadWriteOnce
+  size: 20Gi
 
 mountPath: "/data"
 
@@ -66,7 +66,7 @@ consoleIngress:
 
 # -- DEPLOYMENT --
 DeploymentUpdate:
- type: Recreate
+  type: Recreate
 
 {% if master_deploy %}
 tolerations:
