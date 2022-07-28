@@ -42,6 +42,9 @@ ingress:
     hosts:
       - {{ public_hostname_api }}
     secretName: {{ public_hostname_api }}
+environment:
+  MINIO_BROWSER_REDIRECT_URL: {{ public_hostname_console }}
+  MINIO_SERVER_URL: {{ public_hostname_api }}
 
 # -- MINIO CONSOLE INGRESS --
 consoleIngress:
@@ -61,10 +64,10 @@ DeploymentUpdate:
  type: Recreate
 
 {% if master_deploy %}
-      nodeSelector:
-       node-role.kubernetes.io/master: ''
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
+tolerations:
+- key: node-role.kubernetes.io/master
+  operator: Exists
+  effect: NoSchedule
+nodeSelector:
+  node-role.kubernetes.io/master: ''
 {% endif %}
