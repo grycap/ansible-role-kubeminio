@@ -5,11 +5,13 @@ minioAPIPort: 9000
 minioConsolePort: 9001
 certsPath: /etc/minio/certs/
 
+{% if enable_tls and not enable_ingress %}
 tls:
-  enabled: {{ enable_tls }}
+  enabled: true
   certSecret: certs
   publicCrt: public.crt
   privateKey: private.key
+{% endif %}
 
 # -- MINIO CONSOLE SERVICE --
 consoleService:
@@ -19,7 +21,7 @@ consoleService:
 # -- MINIO SERVICE --
 service:
   type: NodePort
-  port: 30300
+  nodePort: 30300
 
 # -- PVC --
 persistence:
@@ -28,9 +30,10 @@ persistence:
 
 mountPath: "/data"
 
+{% if enable_ingress %}
 # -- INGRESS --
 ingress:
-  enabled: {{ enable_ingress }}
+  enabled: true
   hosts:
   - {{ public_hostname_api }}
   annotations:
@@ -41,19 +44,9 @@ ingress:
     - {{ public_hostname_api }}
     secretName: {{ public_hostname_api }}
 
-{% if enable_ingress %}
-environment:
-  MINIO_BROWSER_REDIRECT_URL: "https://{{ public_hostname_console }}"
-  MINIO_SERVER_URL: "https://{{ public_hostname_api }}"
-{% else %}
-environment:
-  MINIO_BROWSER_REDIRECT_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30300"
-  MINIO_SERVER_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30303"
-{% endif %}
-
 # -- MINIO CONSOLE INGRESS --
 consoleIngress:
-  enabled: {{ enable_ingress }}
+  enabled: true
   hosts:
   - {{ public_hostname_console }}
   annotations:
@@ -63,6 +56,16 @@ consoleIngress:
   - hosts:
     - {{ public_hostname_console }}
     secretName: {{ public_hostname_console }}
+
+# -- ENVIRONMENT VARIABLES --
+environment:
+  MINIO_BROWSER_REDIRECT_URL: "https://{{ public_hostname_console }}"
+  MINIO_SERVER_URL: "https://{{ public_hostname_api }}"
+{% else %}
+environment:
+  MINIO_BROWSER_REDIRECT_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30300"
+  MINIO_SERVER_URL: "{{ "https" if enable_tls else "http" }}://{{ ansible_default_ipv4.address }}:30303"
+{% endif %}
 
 # -- DEPLOYMENT --
 mode: standalone
