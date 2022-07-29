@@ -32,13 +32,13 @@ mountPath: "/data"
 ingress:
   enabled: {{ enable_ingress }}
   hosts:
-    - {{ public_hostname_api }}
+  - {{ public_hostname_api }}
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
   tls:
-    hosts:
-      - {{ public_hostname_api }}
+  - hosts:
+    - {{ public_hostname_api }}
     secretName: {{ public_hostname_api }}
 
 {% if enable_ingress %}
@@ -55,13 +55,13 @@ environment:
 consoleIngress:
   enabled: {{ enable_ingress }}
   hosts:
-    - {{ public_hostname_console }}
+  - {{ public_hostname_console }}
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
   tls:
-    hosts:
-      - {{ public_hostname_console }}
+  - hosts:
+    - {{ public_hostname_console }}
     secretName: {{ public_hostname_console }}
 
 # -- DEPLOYMENT --
