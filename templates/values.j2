@@ -67,6 +67,10 @@ consoleIngress:
 # -- DEPLOYMENT --
 mode: standalone
 
+resources:
+  requests:
+    memory: 600Mi
+
 {% if master_deploy %}
 tolerations:
 - key: node-role.kubernetes.io/master
