@@ -84,7 +84,6 @@ tolerations:
   effect: NoSchedule
 nodeSelector:
   node-role.kubernetes.io/master: ''
-  node-role.kubernetes.io/control-plane: ''
 
 makeUserJob:
  tolerations:
@@ -94,5 +93,4 @@ makeUserJob:
    effect: NoSchedule
  nodeSelector:
    node-role.kubernetes.io/master: ''
-   node-role.kubernetes.io/control-plane: ''
 {% endif %}
