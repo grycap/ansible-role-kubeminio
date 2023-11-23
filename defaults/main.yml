@@ -1,5 +1,5 @@
 # Release version of minio
-chart_release: '5.0.1'
+chart_release: '5.0.14'
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access
