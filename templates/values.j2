@@ -34,10 +34,10 @@ mountPath: "/data"
 # -- INGRESS --
 ingress:
   enabled: true
+  ingressClassName: nginx
   hosts:
   - {{ public_hostname_api }}
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
   tls:
   - hosts:
