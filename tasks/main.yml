@@ -1,64 +1,75 @@
 ---
-- name: Create values file
-  template:
-    src: values.j2
-    dest: /tmp/minio-values.yaml
 
-- name: Add MinIO helm repo
-  command: helm repo add minio https://charts.min.io/
+- name: "Check if MinIO is already deployed"
+  command: helm status minio -n minio
+  register: deployed
+  failed_when: deployed.rc != 0 and deployed.rc != 1
   environment:
     KUBECONFIG: "{{ kubeconfig_path }}"
 
-- name: "Update helm repositories"
-  command: helm repo update
-  environment:
-    KUBECONFIG: "{{ kubeconfig_path }}"
-     
-- name: Create Minio namespace
+- when: deployed.rc == 1
   block:
-    - copy: src=minio-namespace.yaml dest=/tmp/minio-namespace.yaml
-    - command: kubectl apply -f /tmp/minio-namespace.yaml
+
+  - name: Create values file
+    template:
+      src: values.j2
+      dest: /tmp/minio-values.yaml
+
+  - name: Add MinIO helm repo
+    command: helm repo add minio https://charts.min.io/
+    environment:
+      KUBECONFIG: "{{ kubeconfig_path }}"
+
+  - name: "Update helm repositories"
+    command: helm repo update
+    environment:
+      KUBECONFIG: "{{ kubeconfig_path }}"
+      
+  - name: Create Minio namespace
+    block:
+      - copy: src=minio-namespace.yaml dest=/tmp/minio-namespace.yaml
+      - command: kubectl apply -f /tmp/minio-namespace.yaml
+        environment:
+          KUBECONFIG: "{{ kubeconfig_path }}"
+
+  - name: TLS support
+    block:
+    - name: Check if certs are created
+      block:
+      - stat:
+          path: /var/tmp/certs_minio
+        register: certs_dir
+      - stat:
+          path: /var/tmp/certs_minio/private.key
+        register: certs_private
+      - stat:
+          path: /var/tmp/certs_minio/public.crt
+        register: certs_public
+    - name: Create certs dir
+      command: mkdir /var/tmp/certs_minio
+      when: not certs_dir.stat.exists
+    - name: Create certs
+      block:
+      - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
+      - command: openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
+      when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
+    - name: Check if tls-ssl-minio secret is created
+      command: kubectl get secret certs -n minio
       environment:
         KUBECONFIG: "{{ kubeconfig_path }}"
+      register: minio_secret_created
+      failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
+    - name: Create certs secret
+      command: kubectl create secret generic certs --from-file=/var/tmp/certs_minio/private.key --from-file=/var/tmp/certs_minio/public.crt --namespace minio
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+      when: minio_secret_created.rc == 1
+    when: enable_tls == true and enable_ingress == false
 
-- name: TLS support
-  block:
-  - name: Check if certs are created
-    block:
-    - stat:
-        path: /var/tmp/certs_minio
-      register: certs_dir
-    - stat:
-        path: /var/tmp/certs_minio/private.key
-      register: certs_private
-    - stat:
-        path: /var/tmp/certs_minio/public.crt
-      register: certs_public
-  - name: Create certs dir
-    command: mkdir /var/tmp/certs_minio
-    when: not certs_dir.stat.exists
-  - name: Create certs
-    block:
-    - template: src=minio-openssl.j2 dest=/tmp/minio-openssl.conf
-    - command: openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /var/tmp/certs_minio/private.key -out /var/tmp/certs_minio/public.crt -config /tmp/minio-openssl.conf
-    when: (not certs_private.stat.exists) or (not certs_public.stat.exists)
-  - name: Check if tls-ssl-minio secret is created
-    command: kubectl get secret certs -n minio
+  - name: Install (or upgrade) the chart
+    command: helm upgrade minio --install minio/minio --namespace minio --create-namespace --values /tmp/minio-values.yaml --version {{ chart_release }}
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
-    register: minio_secret_created
-    failed_when: minio_secret_created.rc != 0 and minio_secret_created.rc != 1
-  - name: Create certs secret
-    command: kubectl create secret generic certs --from-file=/var/tmp/certs_minio/private.key --from-file=/var/tmp/certs_minio/public.crt --namespace minio
-    environment:
-      KUBECONFIG: "{{ kubeconfig_path }}"
-    when: minio_secret_created.rc == 1
-  when: enable_tls == true and enable_ingress == false
-
-- name: Install (or upgrade) the chart
-  command: helm upgrade minio --install minio/minio --namespace minio --create-namespace --values /tmp/minio-values.yaml --version {{ chart_release }}
-  environment:
-    KUBECONFIG: "{{ kubeconfig_path }}"
 
 - name: Download Minio Client binary
   get_url:
