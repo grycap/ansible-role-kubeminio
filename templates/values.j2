@@ -47,6 +47,7 @@ ingress:
 # -- MINIO CONSOLE INGRESS --
 consoleIngress:
   enabled: true
+  ingressClassName: nginx
   hosts:
   - {{ public_hostname_console }}
   annotations:
