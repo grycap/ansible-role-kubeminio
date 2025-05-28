@@ -47,10 +47,10 @@ ingress:
 # -- MINIO CONSOLE INGRESS --
 consoleIngress:
   enabled: true
+  ingressClassName: nginx
   hosts:
   - {{ public_hostname_console }}
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
   tls:
   - hosts:
