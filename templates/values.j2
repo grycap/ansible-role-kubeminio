@@ -89,3 +89,8 @@ makeUserJob:
  nodeSelector:
    node-role.kubernetes.io/control-plane: ''
 {% endif %}
+
+{% if buckets %}
+buckets:
+{{ buckets | to_nice_yaml(indent=2) | indent(2) }}
+{% endif %}
