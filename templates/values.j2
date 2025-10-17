@@ -38,6 +38,7 @@ ingress:
   hosts:
   - {{ public_hostname_api }}
   annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "{{ ingress_proxy_body_size }}"
     cert-manager.io/cluster-issuer: {{ ingress_certmanager_issuer }}
   tls:
   - hosts:
