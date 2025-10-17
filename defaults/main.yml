@@ -42,3 +42,6 @@ buckets: []
   #   # set objectlocking for
   #   # bucket [true|false] NOTE: versioning is enabled by default if you use locking
   #   objectlocking: false
+# Value to set in the annotation nginx.ingress.kubernetes.io/proxy-body-size
+# that will set the maximum size of the chunk files sent to minio "0" means no limit
+ingress_proxy_body_size: "0"
