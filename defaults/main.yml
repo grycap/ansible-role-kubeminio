@@ -14,6 +14,12 @@ enable_tls: true
 kubeconfig_path: '/etc/kubernetes/admin.conf'
 # Enable ingress with a custom DNS host
 enable_ingress: false
+# Enable HTTPRoute with a custom DNS host
+enable_httproute: false
+# Name and namespace of the Gateway to be used if HTTPRoute is enabled
+httproute_gateway:
+  name: traefik-gateway
+  namespace: traefik
 # Hostname for the ingress (API)
 public_hostname_api: "''"
 # Hostname for the ingress (Console)
