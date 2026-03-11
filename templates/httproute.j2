@@ -16,14 +16,14 @@ spec:
   hostnames:
   - {{ public_hostname_api }}
   parentRefs:
-  - name: {{ httproute_gateway.name }}
-    namespace: {{ httproute_gateway.namespace }}
+  - name: {{ httproute.gateway.name }}
+    namespace: {{ httproute.gateway.namespace }}
   rules:
   - matches:
     - path:
         type: PathPrefix
         value: /
-{% if httproute_type == "traefik" %}
+{% if httproute.type == "traefik" %}
     filters:
     - type: ExtensionRef
       extensionRef:
@@ -34,7 +34,7 @@ spec:
     backendRefs:
     - name: minio
       port: 9000
-{% if httproute_type == "nginx" %}
+{% if httproute.type == "nginx" %}
 ---
 apiVersion: gateway.nginx.org/v1alpha1
 kind: ClientSettingsPolicy
@@ -58,8 +58,8 @@ spec:
   hostnames:
   - {{ public_hostname_console }}
   parentRefs:
-  - name: {{ httproute_gateway.name }}
-    namespace: {{ httproute_gateway.namespace }}
+  - name: {{ httproute.gateway.name }}
+    namespace: {{ httproute.gateway.namespace }}
   rules:
   - matches:
     - path:
