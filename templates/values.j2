@@ -57,8 +57,9 @@ consoleIngress:
   - hosts:
     - {{ public_hostname_console }}
     secretName: {{ public_hostname_console }}
-
+{% endif %}
 # -- ENVIRONMENT VARIABLES --
+{% if enable_ingress or enable_httproute %}
 environment:
   MINIO_BROWSER_REDIRECT_URL: "https://{{ public_hostname_console }}"
   MINIO_SERVER_URL: "https://{{ public_hostname_api }}"

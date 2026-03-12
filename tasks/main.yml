@@ -71,6 +71,20 @@
     environment:
       KUBECONFIG: "{{ kubeconfig_path }}"
 
+  - name: Create HTTPRoute if enabled
+    when: enable_httproute
+
+    block:
+    - name: Create HTTPRoute template
+      template:
+        src: httproute.j2
+        dest: /tmp/minio-httproute.yaml
+
+    - name: Apply HTTPRoute
+      command: kubectl apply -f /tmp/minio-httproute.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
 - name: Download Minio Client binary
   get_url:
     url: https://dl.minio.io/client/mc/release/linux-amd64/mc

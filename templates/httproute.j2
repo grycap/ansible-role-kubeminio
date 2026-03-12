@@ -1,0 +1,71 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: body-limit
+  namespace: minio
+spec:
+  buffering:
+    maxRequestBodyBytes: {{ ingress_proxy_body_size }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: minio-http-route
+  namespace: minio
+spec:
+  hostnames:
+  - {{ public_hostname_api }}
+  parentRefs:
+  - name: {{ httproute.gateway.name }}
+    namespace: {{ httproute.gateway.namespace }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+{% if httproute.type == "traefik" %}
+    filters:
+    - type: ExtensionRef
+      extensionRef:
+        group: traefik.io
+        kind: Middleware
+        name: body-limit
+{% endif %}
+    backendRefs:
+    - name: minio
+      port: 9000
+{% if httproute.type == "nginx" %}
+---
+apiVersion: gateway.nginx.org/v1alpha1
+kind: ClientSettingsPolicy
+metadata:
+  name: body-size-limit
+  namespace: minio
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: minio-http-route
+  clientMaxBodySize: {{ ingress_proxy_body_size }}
+{% endif %}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: minio-console-http-route
+  namespace: minio
+spec:
+  hostnames:
+  - {{ public_hostname_console }}
+  parentRefs:
+  - name: {{ httproute.gateway.name }}
+    namespace: {{ httproute.gateway.namespace }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: minio-console
+      port: 9001
