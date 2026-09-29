@@ -2,6 +2,10 @@ image:
   repository: "{{ image.repository }}"
   tag: "{{ image.tag }}"
 
+mcImage:
+  repository: pgsty/mc:latest
+  tag: RELEASE.2026-09-16T00-00-00Z
+
 rootUser: "{{ minio_accesskey }}"
 rootPassword: "{{ minio_secretkey }}"
 
