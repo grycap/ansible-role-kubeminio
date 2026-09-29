@@ -1,5 +1,9 @@
-# Release version of minio
+# Release version of minio chart
 chart_release: '5.0.14'
+# Image repository and tag for the minio container
+image:
+  repository: pgsty/silo
+  tag: "RELEASE.2026-09-16T00-00-00Z"
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access
