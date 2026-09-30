@@ -4,6 +4,8 @@ chart_release: '5.0.14'
 image:
   repository: pgsty/silo
   tag: "RELEASE.2026-09-16T00-00-00Z"
+# Release version of the minio client binary
+mc_file: RELEASE.2026-09-16T00-00-00Z/mcli_20260916000000.0.0_linux_amd64.tar.gz
 # Access key credential for object storage and web access
 minio_accesskey: 'minio'
 # Secret key credential for object storage and web access

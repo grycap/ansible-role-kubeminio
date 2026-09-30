@@ -87,7 +87,7 @@
 
 - name: Download Minio Client binary
   unarchive:
-    src: https://github.com/pgsty/mc/releases/download/RELEASE.2026-09-16T00-00-00Z/mcli_20260916000000.0.0_linux_amd64.tar.gz
+    src: https://github.com/pgsty/mc/releases/download/{{ mc_file }}
     dest: /tmp
     remote_src: yes
     creates: /usr/local/bin/mc
