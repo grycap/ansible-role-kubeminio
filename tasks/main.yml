@@ -86,7 +86,13 @@
         KUBECONFIG: "{{ kubeconfig_path }}"
 
 - name: Download Minio Client binary
-  get_url:
-    url: https://dl.minio.io/client/mc/release/linux-amd64/mc
-    dest: /usr/local/bin/mc
-    mode: 0755
+  unarchive:
+    src: https://github.com/pgsty/mc/releases/download/{{ mc_file }}
+    dest: /tmp
+    remote_src: yes
+    creates: /usr/local/bin/mc
+
+- name: Move Minio Client binary to /usr/local/bin
+  command: mv /tmp/mcli /usr/local/bin/mc
+  args:
+    creates: /usr/local/bin/mc
