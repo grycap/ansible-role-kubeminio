@@ -1,13 +1,4 @@
 ---
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: body-limit
-  namespace: minio
-spec:
-  buffering:
-    maxRequestBodyBytes: {{ ingress_proxy_body_size }}
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -24,14 +15,6 @@ spec:
     - path:
         type: PathPrefix
         value: /
-{% if httproute.type == "traefik" %}
-    filters:
-    - type: ExtensionRef
-      extensionRef:
-        group: traefik.io
-        kind: Middleware
-        name: body-limit
-{% endif %}
     backendRefs:
     - name: minio
       port: 9000
